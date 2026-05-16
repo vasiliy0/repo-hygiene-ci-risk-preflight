@@ -1,0 +1,9 @@
+{
+  "ignore_rules": ["workflow-without-timeout"],
+  "only_rules": [],
+  "ignore_paths": ["docs/generated/**", "vendor/**"],
+  "severity_overrides": {
+    "missing-contributing": "info"
+  },
+  "baseline_fingerprints": []
+}

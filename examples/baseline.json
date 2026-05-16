@@ -1,0 +1,19 @@
+{
+  "tool": "repo-hygiene-ci-risk-preflight",
+  "baseline_fingerprints": [
+    "9bc5f341bd295f0f",
+    "165bac21a22f35c0",
+    "bb92f8f2eefc0bd5",
+    "d08d1f97df911d77",
+    "514f35b6d63100a0",
+    "d2a9f08b7de29c04",
+    "65562851b495353f",
+    "fccdb0e957df324f",
+    "0cb754fbe218d594",
+    "3aa850d3fcaed552",
+    "65c7cbc7ba97b948",
+    "eba64df60fb25983",
+    "45746ac904c916c2"
+  ],
+  "finding_count": 13
+}

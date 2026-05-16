@@ -1,0 +1,12 @@
+name: Publish
+on: [push]
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/
+      - run: python -m twine upload dist/*
