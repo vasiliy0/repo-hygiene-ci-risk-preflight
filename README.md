@@ -19,7 +19,20 @@ Current rule categories:
 - `release-safety`: release/publish workflows without visible guardrails.
 - `ci-cost`: jobs without visible `timeout-minutes`.
 
-## Try locally
+## Install from PyPI
+
+```bash
+python3 -m pip install repo-hygiene-ci-risk-preflight
+repo-hygiene-preflight path/to/repo --format markdown
+repo-hygiene-preflight path/to/repo --format json
+repo-hygiene-preflight path/to/repo --format annotations
+repo-hygiene-preflight path/to/repo --fail-on-severity high
+repo-hygiene-preflight --list-rules
+```
+
+PyPI: https://pypi.org/project/repo-hygiene-ci-risk-preflight/
+
+## Try from a clone
 
 ```bash
 python3 scanner.py examples
