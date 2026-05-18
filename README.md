@@ -1,6 +1,8 @@
 # Repository Hygiene / CI Risk Preflight
 
-Local no-token scanner for GitHub repository hygiene and CI risk signals before they become release blockers.
+Local no-token scanner for GitHub repository hygiene, CI policy, and release-readiness signals before they become public repo or package release blockers.
+
+Use this before opening a public repo, adding CI gates, publishing a package, or preparing a release checklist. It is broader than the GitHub Actions deprecation scanner: this tool checks repo/package/release hygiene, not only action-version migration risks.
 
 This is the bridge product in the Engineering Risk Preflight suite: it starts as a CLI, can be used in GitHub Actions, and can later inform a GitHub App/SaaS only after demand is validated.
 
@@ -18,6 +20,29 @@ Current rule categories:
 - `ci-observability`: missing test report artifacts/summaries and artifact upload steps without `if: always()`.
 - `release-safety`: release/publish workflows without visible guardrails.
 - `ci-cost`: jobs without visible `timeout-minutes`.
+
+## Repository readiness story
+
+Top checks to run before a repo or package is promoted publicly:
+
+1. Is there a visible license/security/contribution posture?
+2. Are CI workflows using risky broad permissions or `pull_request_target` patterns?
+3. Are release/publish jobs guarded by tags, manual dispatch, environments, or explicit conditions?
+4. Are test reports and failure artifacts preserved for debugging?
+5. Are dependency update tools configured?
+6. Are stale action majors or local Node runtimes likely to break CI later?
+
+Sample report excerpt:
+
+```text
+- high `workflow-write-all-permissions`
+  - Why: Broad workflow permissions increase blast radius if a workflow is abused.
+  - Fix: Prefer least-privilege `permissions:` at workflow/job scope.
+
+- medium `missing-security-policy`
+  - Why: Public repos should tell users how to report vulnerabilities.
+  - Fix: Add SECURITY.md with supported versions and a private reporting path.
+```
 
 ## Install from PyPI
 
@@ -42,6 +67,36 @@ python3 scanner.py examples --min-severity medium
 python3 scanner.py examples --fail-on-severity high
 python3 scanner.py --list-rules
 ```
+
+Generated example reports:
+
+- [`examples/report.md`](examples/report.md)
+- [`examples/report.json`](examples/report.json)
+- [`examples/annotations.txt`](examples/annotations.txt)
+
+## GitHub Action wrapper (planned)
+
+A Marketplace-friendly GitHub Action wrapper is being prepared. The intended usage is:
+
+```yaml
+name: repo-hygiene-preflight
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: vasiliy0/repo-hygiene-ci-risk-preflight@v0.1.0
+        with:
+          format: markdown
+          output: repo-hygiene-report.md
+```
+
+Until the Action is released, use the PyPI install flow above in CI.
 
 ## Config and baselines
 
@@ -86,6 +141,12 @@ python3 scanner.py . --baseline repo-hygiene-baseline.json --fail-on-severity hi
 - No source upload.
 - Findings include file paths and matching lines; review before sharing publicly.
 - Rules are conservative preflight signals, not compliance/security guarantees.
+
+## Related Engineering Risk Preflight tools
+
+- [GitHub Actions Deprecation Preflight](https://github.com/vasiliy0/github-actions-deprecation-preflight) — focused action-major/runtime migration checks for workflows.
+- [Zod OpenAPI Contract Lint Kit](https://github.com/vasiliy0/zod-openapi-contract-lint-kit) — API contract drift checks for Zod/OpenAPI projects.
+- [Playwright Flake Triage Toolkit](https://github.com/vasiliy0/playwright-flake-triage) — local triage for flaky Playwright reports and CI logs.
 
 ## Monetization hypothesis
 
