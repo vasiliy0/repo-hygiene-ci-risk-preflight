@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/vasiliy0/repo-hygiene-ci-risk-preflight/schemas/report.schema.json",
+  "title": "Repository Hygiene / CI Risk Preflight Report",
+  "type": "object",
+  "required": ["schema_version", "tool", "tool_version", "status", "root", "scanned_files", "finding_count", "summary", "findings", "notes"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "tool": {"const": "repo-hygiene-ci-risk-preflight"},
+    "tool_version": {"type": "string"},
+    "version": {"type": "string"},
+    "status": {"enum": ["ok", "warning", "fail", "error"]},
+    "root": {"type": "string"},
+    "config": {"type": ["string", "null"]},
+    "scanned_workflows": {"type": "integer", "minimum": 0},
+    "scanned_files": {"type": "integer", "minimum": 0},
+    "active_rules": {"type": "array", "items": {"type": "string"}},
+    "finding_count": {"type": "integer", "minimum": 0},
+    "summary": {"type": "object"},
+    "summary_by_severity": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+    "summary_by_category": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+    "summary_by_rule": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["rule_id", "severity", "category", "file", "line", "signal", "why", "fix", "confidence", "fingerprint"],
+        "properties": {
+          "rule_id": {"type": "string"},
+          "severity": {"enum": ["info", "low", "medium", "high"]},
+          "category": {"type": "string"},
+          "file": {"type": "string"},
+          "line": {"type": "integer", "minimum": 0},
+          "signal": {"type": "string"},
+          "why": {"type": "string"},
+          "fix": {"type": "string"},
+          "confidence": {"type": "string"},
+          "fingerprint": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "metadata": {"type": "object"},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

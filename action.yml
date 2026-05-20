@@ -1,0 +1,71 @@
+name: "Repository Hygiene / CI Risk Preflight"
+description: "No-token repository hygiene and CI risk scan for stale Actions, release guardrails, ownership docs, and CI observability gaps."
+author: "Repo Hygiene CI Risk Preflight contributors"
+branding:
+  icon: "shield"
+  color: "blue"
+inputs:
+  path:
+    description: "Repository path to scan."
+    required: false
+    default: "."
+  format:
+    description: "Report format: markdown, json, or annotations."
+    required: false
+    default: "markdown"
+  output:
+    description: "Optional report output path. Defaults to repo-hygiene-report.md for markdown/json and no file for annotations."
+    required: false
+    default: "repo-hygiene-report.md"
+  min-severity:
+    description: "Minimum severity to include: low, medium, or high. Leave empty to include all findings."
+    required: false
+    default: ""
+  fail-on-severity:
+    description: "Fail the workflow when findings at or above this severity exist: low, medium, or high. Leave empty for report-only mode."
+    required: false
+    default: ""
+  config:
+    description: "Optional config file path."
+    required: false
+    default: ""
+  baseline:
+    description: "Optional baseline file path to suppress accepted findings."
+    required: false
+    default: ""
+  version:
+    description: "PyPI package version to install."
+    required: false
+    default: "0.1.1"
+runs:
+  using: "composite"
+  steps:
+    - name: Install repo hygiene preflight
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install "repo-hygiene-ci-risk-preflight==${{ inputs.version }}"
+    - name: Run repo hygiene preflight
+      shell: bash
+      run: |
+        set -euo pipefail
+        args=("${{ inputs.path }}" --format "${{ inputs.format }}")
+        if [ -n "${{ inputs.output }}" ] && [ "${{ inputs.format }}" != "annotations" ]; then
+          args+=(--output "${{ inputs.output }}")
+        fi
+        if [ -n "${{ inputs.min-severity }}" ]; then
+          args+=(--min-severity "${{ inputs.min-severity }}")
+        fi
+        if [ -n "${{ inputs.fail-on-severity }}" ]; then
+          args+=(--fail-on-severity "${{ inputs.fail-on-severity }}")
+        fi
+        if [ -n "${{ inputs.config }}" ]; then
+          args+=(--config "${{ inputs.config }}")
+        fi
+        if [ -n "${{ inputs.baseline }}" ]; then
+          args+=(--baseline "${{ inputs.baseline }}")
+        fi
+        repo-hygiene-preflight "${args[@]}"
+        if [ -n "${{ inputs.output }}" ] && [ -f "${{ inputs.output }}" ] && [ "${{ inputs.format }}" = "markdown" ] && [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+          cat "${{ inputs.output }}" >> "$GITHUB_STEP_SUMMARY"
+        fi

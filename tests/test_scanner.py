@@ -78,6 +78,17 @@ class TestRepoHygieneScanner(unittest.TestCase):
             scanner.main([str(ROOT / "examples"), "--config", str(config), "--baseline", str(baseline), "--format", "json", "--output", str(output2)])
             self.assertEqual(json.loads(output2.read_text())["finding_count"], 0)
 
+
+    def test_json_report_has_agent_contract_fields(self):
+        report = scanner.scan(ROOT / "examples")
+        self.assertEqual(report["schema_version"], "1.0")
+        self.assertEqual(report["tool"], "repo-hygiene-ci-risk-preflight")
+        self.assertIn("tool_version", report)
+        self.assertIn(report["status"], {"ok", "warning"})
+        self.assertIn("summary", report)
+        self.assertIn("metadata", report)
+        self.assertIn("fingerprint", report["findings"][0])
+
     def test_annotations_output(self):
         text = scanner.render_annotations(scanner.filtered_report(scanner.scan(ROOT / "examples"), "high"))
         self.assertIn("::error", text)

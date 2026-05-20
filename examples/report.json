@@ -1,10 +1,13 @@
 {
+  "schema_version": "1.0",
   "tool": "repo-hygiene-ci-risk-preflight",
-  "version": "0.1.0",
+  "tool_version": "0.1.1",
+  "version": "0.1.1",
+  "status": "warning",
   "root": "/workspace/products/repo-hygiene-ci-risk-preflight/examples",
   "config": null,
   "scanned_workflows": 2,
-  "scanned_files": 3,
+  "scanned_files": 5,
   "active_rules": [
     "upload-artifact-v3",
     "download-artifact-v3",
@@ -53,6 +56,39 @@
     "release-workflow-without-guardrail": 1,
     "upload-artifact-v3": 1,
     "workflow-without-timeout": 2
+  },
+  "summary": {
+    "scanned_files": 5,
+    "scanned_workflows": 2,
+    "finding_count": 13,
+    "summary_by_severity": {
+      "high": 3,
+      "low": 6,
+      "medium": 4
+    },
+    "summary_by_category": {
+      "ci-cost": 2,
+      "ci-deprecation": 2,
+      "ci-observability": 2,
+      "ci-runtime": 1,
+      "dependency-hygiene": 1,
+      "release-safety": 1,
+      "repo-hygiene": 4
+    },
+    "summary_by_rule": {
+      "artifact-upload-without-always": 1,
+      "checkout-v3-review": 1,
+      "local-action-node16": 1,
+      "missing-changelog": 1,
+      "missing-ci-report-artifact": 1,
+      "missing-codeowners": 1,
+      "missing-contributing": 1,
+      "missing-dependabot-config": 1,
+      "missing-security-policy": 1,
+      "release-workflow-without-guardrail": 1,
+      "upload-artifact-v3": 1,
+      "workflow-without-timeout": 2
+    }
   },
   "findings": [
     {
@@ -212,6 +248,9 @@
       "fingerprint": "45746ac904c916c2"
     }
   ],
+  "metadata": {
+    "privacy": "local-only; no GitHub API, token, network call, source upload, or telemetry"
+  },
   "notes": [
     "Read-only local scan; No GitHub API, token, network call, or source upload.",
     "Rules are conservative preflight signals, not compliance/security guarantees.",

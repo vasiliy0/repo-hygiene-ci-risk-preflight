@@ -1,7 +1,7 @@
 # Repository Hygiene / CI Risk Preflight
 
 Scanned workflows: 2
-Scanned files: 3
+Scanned files: 5
 Active rules: 18
 Findings: 13
 

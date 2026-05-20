@@ -11,6 +11,8 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Iterable
 
+from . import __version__
+
 SEVERITY_ORDER = {"info": 0, "low": 1, "medium": 2, "high": 3}
 SEVERITIES = tuple(SEVERITY_ORDER)
 WORKFLOW_GLOBS = ("*.yml", "*.yaml")
@@ -243,8 +245,11 @@ def scan(root: Path, config_path: str | None = None, baseline_path: str | None =
     if baseline:
         findings = [finding for finding in findings if finding.fingerprint not in baseline]
     return {
+        "schema_version": "1.0",
         "tool": "repo-hygiene-ci-risk-preflight",
-        "version": "0.1.0",
+        "tool_version": __version__,
+        "version": __version__,
+        "status": "warning" if findings else "ok",
         "root": str(root),
         "config": str(loaded_config_path) if loaded_config_path else None,
         "scanned_workflows": len(workflow_files(root, config)),
@@ -254,7 +259,18 @@ def scan(root: Path, config_path: str | None = None, baseline_path: str | None =
         "summary_by_severity": summary(findings, "severity"),
         "summary_by_category": summary(findings, "category"),
         "summary_by_rule": summary(findings, "rule_id"),
+        "summary": {
+            "scanned_files": len(line_scan_files(root, config)),
+            "scanned_workflows": len(workflow_files(root, config)),
+            "finding_count": len(findings),
+            "summary_by_severity": summary(findings, "severity"),
+            "summary_by_category": summary(findings, "category"),
+            "summary_by_rule": summary(findings, "rule_id"),
+        },
         "findings": [asdict(f) for f in findings],
+        "metadata": {
+            "privacy": "local-only; no GitHub API, token, network call, source upload, or telemetry",
+        },
         "notes": [
             "Read-only local scan; No GitHub API, token, network call, or source upload.",
             "Rules are conservative preflight signals, not compliance/security guarantees.",
@@ -375,6 +391,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--only-rule", action="append", default=[], help="Only run a rule id; repeatable")
     parser.add_argument("--ignore-rule", action="append", default=[], help="Ignore a rule id; repeatable")
     parser.add_argument("--list-rules", action="store_true", help="List active rule inventory and exit")
+    parser.add_argument("--quiet", action="store_true", help="Automation-friendly no-op: suppresses future non-report diagnostics; reports still write normally.")
+    parser.add_argument("--no-color", action="store_true", help="Automation-friendly no-op: output is plain text by default and never requires color.")
     args = parser.parse_args(argv)
 
     if args.list_rules:

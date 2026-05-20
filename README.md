@@ -90,7 +90,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: vasiliy0/repo-hygiene-ci-risk-preflight@v0.1.0
+      - uses: vasiliy0/repo-hygiene-ci-risk-preflight@v0.1.1
         with:
           format: markdown
           output: repo-hygiene-report.md
@@ -125,6 +125,20 @@ python3 scanner.py . --baseline repo-hygiene-baseline.json --fail-on-severity hi
 - JSON report for CI artifacts or later policy processing.
 - GitHub workflow annotation commands via `--format annotations`.
 - Stable finding fingerprints for suppressions and baselines.
+
+## For AI agents and automation
+
+Use JSON mode as the stable machine interface:
+
+```bash
+repo-hygiene-preflight . --format json --output repo-hygiene-report.json --quiet --no-color
+```
+
+Machine contract: `schemas/report.schema.json` (`schema_version: 1.0`). Findings include rule id, severity, category, file/line, matched signal, fix guidance, and stable fingerprints for baselines/reruns. GitHub annotation output is available with `--format annotations`.
+
+Exit codes: `0` completed/report-only, `1` configured severity gate matched, `2` usage/config/input error, `3` reserved for runtime/tool errors.
+
+Agent workflow docs: [`docs/AGENT_INTEGRATION.md`](docs/AGENT_INTEGRATION.md).
 
 ## Docs
 
