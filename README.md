@@ -74,9 +74,9 @@ Generated example reports:
 - [`examples/report.json`](examples/report.json)
 - [`examples/annotations.txt`](examples/annotations.txt)
 
-## GitHub Action wrapper (planned)
+## GitHub Action
 
-A Marketplace-friendly GitHub Action wrapper is being prepared. The intended usage is:
+Use the Marketplace-friendly GitHub Action wrapper for no-token repository hygiene and CI risk scans:
 
 ```yaml
 name: repo-hygiene-preflight
@@ -96,7 +96,7 @@ jobs:
           output: repo-hygiene-report.md
 ```
 
-Until the Action is released, use the PyPI install flow above in CI.
+For report-only adoption, keep `fail-on-severity` empty. To turn it into a CI gate, set `fail-on-severity: high` after reviewing the first report.
 
 ## Config and baselines
 
